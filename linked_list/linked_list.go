@@ -1,12 +1,14 @@
 package linked_list
 
-type List[T comparable] struct {
+import "reflect"
+
+type List[T any] struct {
 	prev  *List[T]
 	value T
 	next  *List[T]
 }
 
-func New[T comparable](initial_value T) *List[T] {
+func New[T any](initial_value T) *List[T] {
 	return &List[T]{value: initial_value}
 }
 
@@ -20,7 +22,7 @@ func (l *List[T]) Add(value T) {
 }
 
 func (l *List[T]) Remove(value T) {
-	if l.value == value {
+	if reflect.DeepEqual(l.value, value) {
 		if l.prev != nil {
 			l.prev.next = l.next
 		}
@@ -33,7 +35,7 @@ func (l *List[T]) Remove(value T) {
 }
 
 func (l *List[T]) Contains(value T) bool {
-	if l.value == value {
+	if reflect.DeepEqual(l.value, value) {
 		return true
 	} else if l.next == nil {
 		return false
@@ -43,7 +45,7 @@ func (l *List[T]) Contains(value T) bool {
 }
 
 func (l *List[T]) Seek(value T) *List[T] {
-	if l.value == value {
+	if reflect.DeepEqual(l.value, value) {
 		return l
 	} else if l.next == nil {
 		return nil
