@@ -36,10 +36,11 @@ func (s *Stack[T]) Push(x *T) error {
 
 func (s *Stack[T]) Pop() (*T, error) {
 	if s.top == -1 {
-		return s.data[0], ErrEmptyStack
+		return nil, ErrEmptyStack
 	}
 
 	x := s.data[s.top]
+	s.data[s.top] = nil
 	s.top--
 	return x, nil
 }
