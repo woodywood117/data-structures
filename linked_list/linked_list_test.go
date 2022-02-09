@@ -16,11 +16,13 @@ func TestListAdd(t *testing.T) {
 
 	list.Add(2)
 	assert.Equal(t, 2, list.head.next.value)
+	assert.Equal(t, 2, list.tail.value)
 	assert.Equal(t, list.head, list.head.next.prev)
 
 	list.Add(3)
 	next := list.head.next
 	assert.Equal(t, 3, next.next.value)
+	assert.Equal(t, 3, list.tail.value)
 	assert.Equal(t, next, next.next.prev)
 }
 
@@ -41,6 +43,53 @@ func TestListRemove(t *testing.T) {
 	list.Remove(1)
 	assert.Equal(t, 4, list.head.value)
 	assert.Nil(t, list.head.prev)
+}
+
+func TestListRemoveTail(t *testing.T) {
+	list := New(1)
+	list.Add(2)
+	list.Add(3)
+	list.Add(4)
+
+	list.Remove(4)
+	assert.Equal(t, 3, list.tail.value)
+
+	list.Remove(2)
+	assert.Equal(t, 3, list.tail.value)
+}
+
+func TestListPopHead(t *testing.T) {
+	list := New(1)
+	list.Add(2)
+	list.Add(3)
+
+	head_value, err := list.PopHead()
+	assert.Nil(t, err)
+	assert.Equal(t, 1, head_value)
+	assert.Equal(t, 2, list.head.value)
+	assert.Equal(t, list.head, list.head.next.prev)
+
+	list = New(1)
+	list.PopHead()
+	_, err = list.PopHead()
+	assert.ErrorIs(t, ErrEmptyList, err)
+}
+
+func TestListPopTail(t *testing.T) {
+	list := New(1)
+	list.Add(2)
+	list.Add(3)
+
+	tail_value, err := list.PopTail()
+	assert.Nil(t, err)
+	assert.Equal(t, 3, tail_value)
+	assert.Equal(t, 2, list.tail.value)
+	assert.Equal(t, list.tail, list.tail.prev.next)
+
+	list = New(1)
+	list.PopTail()
+	_, err = list.PopTail()
+	assert.ErrorIs(t, ErrEmptyList, err)
 }
 
 func TestRecreateHead(t *testing.T) {

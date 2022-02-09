@@ -1,6 +1,11 @@
 package linked_list
 
-import "reflect"
+import (
+	"errors"
+	"reflect"
+)
+
+var ErrEmptyList = errors.New("empty list")
 
 type node[T any] struct {
 	prev  *node[T]
@@ -10,19 +15,21 @@ type node[T any] struct {
 
 type List[T any] struct {
 	head *node[T]
+	tail *node[T]
 }
 
 func New[T any](initial_value T) *List[T] {
 	head_node := &node[T]{value: initial_value}
-	return &List[T]{head: head_node}
+	return &List[T]{head: head_node, tail: head_node}
 }
 
-func (n *node[T]) add(value T) {
+func (n *node[T]) add(value T) *node[T] {
 	if n.next == nil {
 		n.next = &node[T]{value: value}
 		n.next.prev = n
+		return n.next
 	} else {
-		n.next.add(value)
+		return n.next.add(value)
 	}
 }
 
@@ -30,11 +37,11 @@ func (l *List[T]) Add(value T) {
 	if l.head == nil {
 		l.head = &node[T]{value: value}
 	} else {
-		l.head.add(value)
+		l.tail = l.head.add(value)
 	}
 }
 
-func (n *node[T]) remove(value T) {
+func (n *node[T]) remove(value T) *node[T] {
 	if reflect.DeepEqual(n.value, value) {
 		if n.prev != nil {
 			n.prev.next = n.next
@@ -42,8 +49,9 @@ func (n *node[T]) remove(value T) {
 		if n.next != nil {
 			n.next.prev = n.prev
 		}
+		return n
 	} else {
-		n.next.remove(value)
+		return n.next.remove(value)
 	}
 }
 
@@ -56,10 +64,47 @@ func (l *List[T]) Remove(value T) {
 		l.head = l.head.next
 		if l.head != nil {
 			l.head.prev = nil
+		} else {
+			l.tail = nil
 		}
 	} else if l.head.next != nil {
-		l.head.next.remove(value)
+		removed := l.head.next.remove(value)
+		if removed == l.tail {
+			l.tail = removed.prev
+		}
 	}
+}
+
+func (l *List[T]) PopHead() (T, error) {
+	if l.head == nil {
+		return *new(T), ErrEmptyList
+	}
+
+	value := l.head.value
+	l.head = l.head.next
+	if l.head != nil {
+		l.head.prev = nil
+	} else {
+		l.tail = nil
+	}
+
+	return value, nil
+}
+
+func (l *List[T]) PopTail() (T, error) {
+	if l.tail == nil {
+		return *new(T), ErrEmptyList
+	}
+
+	value := l.tail.value
+	l.tail = l.tail.prev
+	if l.tail != nil {
+		l.tail.next = nil
+	} else {
+		l.head = nil
+	}
+
+	return value, nil
 }
 
 func (n *node[T]) contains(value T) bool {
