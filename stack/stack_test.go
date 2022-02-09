@@ -6,17 +6,17 @@ import "github.com/stretchr/testify/assert"
 func TestNewStack(t *testing.T) {
 	s, err := New[int](10)
 	assert.Nil(t, err)
-	assert.Equal(t, s.top, -1)
-	assert.Equal(t, len(s.data), 10)
+	assert.Equal(t, -1, s.top)
+	assert.Equal(t, 10, len(s.data))
 }
 
 func TestNewStackBadCapacity(t *testing.T) {
 	s, err := New[int](0)
-	assert.ErrorIs(t, err, ErrInvalidCapacity)
+	assert.ErrorIs(t, ErrInvalidCapacity, err)
 	assert.Nil(t, s)
 
 	s, err = New[int](-1)
-	assert.ErrorIs(t, err, ErrInvalidCapacity)
+	assert.ErrorIs(t, ErrInvalidCapacity, err)
 	assert.Nil(t, s)
 }
 
@@ -25,8 +25,8 @@ func TestStackPush(t *testing.T) {
 
 	value := 1
 	s.Push(&value)
-	assert.Equal(t, s.top, 0)
-	assert.Equal(t, *s.data[0], value)
+	assert.Equal(t, 0, s.top)
+	assert.Equal(t, value, *s.data[0])
 }
 
 func TestStackOverflow(t *testing.T) {
@@ -34,7 +34,7 @@ func TestStackOverflow(t *testing.T) {
 
 	value := 1
 	s.Push(&value)
-	assert.ErrorIs(t, s.Push(&value), ErrStackOverflow)
+	assert.ErrorIs(t, ErrStackOverflow, s.Push(&value))
 }
 
 func TestStackPop(t *testing.T) {
@@ -44,8 +44,8 @@ func TestStackPop(t *testing.T) {
 	s.Push(&value)
 	pop, err := s.Pop()
 	assert.Nil(t, err)
-	assert.Equal(t, *pop, 1)
-	assert.Equal(t, s.top, -1)
+	assert.Equal(t, 1, *pop)
+	assert.Equal(t, -1, s.top)
 }
 
 func TestStackMultiPop(t *testing.T) {
@@ -59,15 +59,15 @@ func TestStackMultiPop(t *testing.T) {
 	s.Push(&value2)
 	pop, err := s.Pop()
 	assert.Nil(t, err)
-	assert.Equal(t, *pop, 2)
-	assert.Equal(t, s.top, -1)
+	assert.Equal(t, 2, *pop)
+	assert.Equal(t, -1, s.top)
 }
 
 func TestStackEmptyPop(t *testing.T) {
 	s, _ := New[int](1)
 
 	_, err := s.Pop()
-	assert.ErrorIs(t, err, ErrEmptyStack)
+	assert.ErrorIs(t, ErrEmptyStack, err)
 }
 
 func TestStackPeek(t *testing.T) {
@@ -77,15 +77,15 @@ func TestStackPeek(t *testing.T) {
 	s.Push(&value)
 	peek, err := s.Peek()
 	assert.Nil(t, err)
-	assert.Equal(t, *peek, 1)
-	assert.Equal(t, s.top, 0)
+	assert.Equal(t, 1, *peek)
+	assert.Equal(t, 0, s.top)
 }
 
 func TestStackEmptyPeek(t *testing.T) {
 	s, _ := New[int](1)
 
 	_, err := s.Peek()
-	assert.ErrorIs(t, err, ErrEmptyStack)
+	assert.ErrorIs(t, ErrEmptyStack, err)
 }
 
 func TestStackEmpty(t *testing.T) {

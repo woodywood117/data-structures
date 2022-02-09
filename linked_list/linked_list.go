@@ -2,62 +2,88 @@ package linked_list
 
 import "reflect"
 
-type List[T any] struct {
-	prev  *List[T]
+type node[T any] struct {
+	prev  *node[T]
 	value T
-	next  *List[T]
+	next  *node[T]
+}
+
+type List[T any] struct {
+	head *node[T]
 }
 
 func New[T any](initial_value T) *List[T] {
-	return &List[T]{value: initial_value}
+	head_node := &node[T]{value: initial_value}
+	return &List[T]{head: head_node}
+}
+
+func (n *node[T]) add(value T) {
+	if n.next == nil {
+		n.next = &node[T]{value: value}
+		n.next.prev = n
+	} else {
+		n.next.add(value)
+	}
 }
 
 func (l *List[T]) Add(value T) {
-	if l.next == nil {
-		l.next = &List[T]{value: value}
-		l.next.prev = l
+	if l.head == nil {
+		l.head = &node[T]{value: value}
 	} else {
-		l.next.Add(value)
+		l.head.add(value)
+	}
+}
+
+func (n *node[T]) remove(value T) {
+	if reflect.DeepEqual(n.value, value) {
+		if n.prev != nil {
+			n.prev.next = n.next
+		}
+		if n.next != nil {
+			n.next.prev = n.prev
+		}
+	} else {
+		n.next.remove(value)
 	}
 }
 
 func (l *List[T]) Remove(value T) {
-	if reflect.DeepEqual(l.value, value) {
-		if l.prev != nil {
-			l.prev.next = l.next
+	if l.head == nil {
+		return
+	}
+
+	if reflect.DeepEqual(l.head.value, value) {
+		l.head = l.head.next
+		if l.head != nil {
+			l.head.prev = nil
 		}
-		if l.next != nil {
-			l.next.prev = l.prev
-		}
+	} else if l.head.next != nil {
+		l.head.next.remove(value)
+	}
+}
+
+func (n *node[T]) contains(value T) bool {
+	if reflect.DeepEqual(n.value, value) {
+		return true
+	} else if n.next == nil {
+		return false
 	} else {
-		l.next.Remove(value)
+		return n.next.contains(value)
 	}
 }
 
 func (l *List[T]) Contains(value T) bool {
-	if reflect.DeepEqual(l.value, value) {
-		return true
-	} else if l.next == nil {
-		return false
-	} else {
-		return l.next.Contains(value)
-	}
+	return l.head.contains(value)
 }
 
-func (l *List[T]) Seek(value T) *List[T] {
-	if reflect.DeepEqual(l.value, value) {
-		return l
-	} else if l.next == nil {
-		return nil
+func (n *node[T]) length() int {
+	if n.next == nil {
+		return 1
 	} else {
-		return l.next.Seek(value)
+		return 1 + n.next.length()
 	}
 }
 
 func (l *List[T]) Length() int {
-	if l.next == nil {
-		return 1
-	} else {
-		return 1 + l.next.Length()
-	}
+	return l.head.length()
 }
