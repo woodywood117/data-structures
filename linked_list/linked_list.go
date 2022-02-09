@@ -18,9 +18,8 @@ type List[T any] struct {
 	tail *node[T]
 }
 
-func New[T any](initial_value T) *List[T] {
-	head_node := &node[T]{value: initial_value}
-	return &List[T]{head: head_node, tail: head_node}
+func New[T any]() *List[T] {
+	return &List[T]{}
 }
 
 func (n *node[T]) add(value T) *node[T] {

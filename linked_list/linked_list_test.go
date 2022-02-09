@@ -6,14 +6,16 @@ import (
 )
 
 func TestNewList(t *testing.T) {
-	list := New(1)
+	list := New[int]()
 
-	assert.Equal(t, 1, list.head.value)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
 }
 
 func TestListAdd(t *testing.T) {
-	list := New(1)
+	list := New[int]()
 
+	list.Add(1)
 	list.Add(2)
 	assert.Equal(t, 2, list.head.next.value)
 	assert.Equal(t, 2, list.tail.value)
@@ -27,7 +29,8 @@ func TestListAdd(t *testing.T) {
 }
 
 func TestListRemove(t *testing.T) {
-	list := New(1)
+	list := New[int]()
+	list.Add(1)
 	list.Add(2)
 	list.Add(3)
 	list.Add(4)
@@ -46,7 +49,8 @@ func TestListRemove(t *testing.T) {
 }
 
 func TestListRemoveTail(t *testing.T) {
-	list := New(1)
+	list := New[int]()
+	list.Add(1)
 	list.Add(2)
 	list.Add(3)
 	list.Add(4)
@@ -59,7 +63,8 @@ func TestListRemoveTail(t *testing.T) {
 }
 
 func TestListPopHead(t *testing.T) {
-	list := New(1)
+	list := New[int]()
+	list.Add(1)
 	list.Add(2)
 	list.Add(3)
 
@@ -69,14 +74,16 @@ func TestListPopHead(t *testing.T) {
 	assert.Equal(t, 2, list.head.value)
 	assert.Equal(t, list.head, list.head.next.prev)
 
-	list = New(1)
+	list = New[int]()
+	list.Add(1)
 	list.PopHead()
 	_, err = list.PopHead()
 	assert.ErrorIs(t, ErrEmptyList, err)
 }
 
 func TestListPopTail(t *testing.T) {
-	list := New(1)
+	list := New[int]()
+	list.Add(1)
 	list.Add(2)
 	list.Add(3)
 
@@ -86,15 +93,15 @@ func TestListPopTail(t *testing.T) {
 	assert.Equal(t, 2, list.tail.value)
 	assert.Equal(t, list.tail, list.tail.prev.next)
 
-	list = New(1)
+	list = New[int]()
+	list.Add(1)
 	list.PopTail()
 	_, err = list.PopTail()
 	assert.ErrorIs(t, ErrEmptyList, err)
 }
 
 func TestRecreateHead(t *testing.T) {
-	list := New(1)
-	list.Remove(1)
+	list := New[int]()
 	list.Remove(1)
 
 	list.Add(2)
@@ -102,7 +109,8 @@ func TestRecreateHead(t *testing.T) {
 }
 
 func TestListContains(t *testing.T) {
-	list := New(1)
+	list := New[int]()
+	list.Add(1)
 	list.Add(2)
 	list.Add(3)
 
@@ -111,7 +119,8 @@ func TestListContains(t *testing.T) {
 }
 
 func TestListLength(t *testing.T) {
-	list := New(1)
+	list := New[int]()
+	list.Add(1)
 	list.Add(2)
 	list.Add(3)
 
