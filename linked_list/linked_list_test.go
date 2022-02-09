@@ -46,6 +46,10 @@ func TestListRemove(t *testing.T) {
 	list.Remove(1)
 	assert.Equal(t, 4, list.head.value)
 	assert.Nil(t, list.head.prev)
+
+	list.Remove(4)
+	assert.Nil(t, list.head)
+	assert.Nil(t, list.tail)
 }
 
 func TestListRemoveTail(t *testing.T) {
@@ -93,10 +97,11 @@ func TestListPopTail(t *testing.T) {
 	assert.Equal(t, 2, list.tail.value)
 	assert.Equal(t, list.tail, list.tail.prev.next)
 
-	list = New[int]()
-	list.Add(1)
-	list.PopTail()
-	_, err = list.PopTail()
+	list2 := New[int]()
+	list2.Add(1)
+	list2.PopTail()
+	assert.Nil(t, list2.head)
+	_, err = list2.PopTail()
 	assert.ErrorIs(t, ErrEmptyList, err)
 }
 

@@ -35,6 +35,7 @@ func (n *node[T]) add(value T) *node[T] {
 func (l *List[T]) Add(value T) {
 	if l.head == nil {
 		l.head = &node[T]{value: value}
+		l.tail = l.head
 	} else {
 		l.tail = l.head.add(value)
 	}
